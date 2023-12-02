@@ -1,3 +1,4 @@
+let state = 0; // 0:init 1:add 2: upd 3:del
 $(document).ready(function () {
     $("#detailContains").css("display", "none");
     // when click the create button, show the detailContains
@@ -10,6 +11,8 @@ $(document).ready(function () {
         $("#detailContains").css("display", "block");
         // hide the queryContainer
         $("#queryContainer").css("display", "none");
+        
+         state = 1; 
     });
 
     // when click the update button, show the queryContainer
@@ -19,7 +22,15 @@ $(document).ready(function () {
         // hide the detailContains
         $("#detailContains").css("display", "none");
         // set the form action for update
-        $("#frmDetail").attr("action", "/UpdateCountry");
+        $("#frmDetail").attr("action", "/country/updateCountry");
+        
+		if ($(this).attr("id") == "selUpdate") {
+			state = 2; // upd
+		} else {
+			state = 3; // del
+		}
+        
+        
     });
 
     // when click the return button, hide the detailContains
@@ -42,12 +53,38 @@ $(document).ready(function () {
             success: function (data) {
                 $("#detailContains").css("display", "block");
                 // show the data in the detailContains
-                $("#countryCodeInput").val(data.mstcountrycd);
-                $("#countryNameInput").val(data.mstcountrynanme);
+                $("#mstcountrycd").val(data.mstcountrycd);
+                $("#mstcountrynanme").val(data.mstcountrynanme);
             },
             error: function (e) {
                 alert("error");
             }
         });
     });
+	$("#updateBtn").on('click', function() {
+		var url = "";
+		if (state == 1) {
+			url = "/country/createCountry";
+		} else if (state == 2) {
+			url = "/country/updateCountry";
+		} else if (state == 3) {
+			url = "/country/deleteCountry";
+		} else {
+			alert("state error");
+			return;
+		}
+
+		$.ajax({
+			url: url,
+			type: "POST",
+			data: $("#frmDetail").serialize(),
+			dataType: "json",
+			success: function(data) {
+				alert("success");
+			},
+			error: function(data) {
+				alert("error");
+			}
+		});
+	});
 });

@@ -17,6 +17,7 @@ import com.example.servingwebcontent.entity.CountryEntity;
 import com.example.servingwebcontent.form.CountrySearchForm;
 import com.example.servingwebcontent.repository.CountryEntityMapper;
 import com.google.gson.Gson;
+import com.example.servingwebcontent.form.CountryForm;
 
 @Controller
 public class CountryController {
@@ -59,11 +60,39 @@ public class CountryController {
 	 */
 	@PostMapping("/country/createCountry")
 	@ResponseBody
-	public String createCountry(@RequestBody CountryEntity countryEntity) {
+	public String createCountry(@Validated CountryForm CountryForm) {
 		// Method body goes here
 		// For example, you might save the countryEntity to the database
 		// Then return a success message or the saved entity
-		return "Country created successfully";
+		//return "Country created successfully";
+		CountryEntity contryEntity = new CountryEntity();
+		contryEntity.setMstcountrycd(CountryForm.getMstcountrycd());
+		contryEntity.setMstcountrynanme(CountryForm.getMstcountrynanme());
+
+		mapper.insert(contryEntity);
+
+		return "1";
+	}
+	
+	@PostMapping("/country/updateCountry")
+	@ResponseBody
+	public String updateCountry(@Validated CountryForm CountryForm) {
+
+		CountryEntity contryEntity = new CountryEntity();
+		contryEntity.setMstcountrycd(CountryForm.getMstcountrycd());
+		contryEntity.setMstcountrynanme(CountryForm.getMstcountrynanme());
+
+		mapper.updateByPrimaryKey(contryEntity);
+
+		return "1";
+	}
+
+	@PostMapping("/country/deleteCountry")
+	@ResponseBody
+	public String delete(@Validated CountryForm CountryForm) {
+
+		mapper.deleteByPrimaryKey(CountryForm.getMstcountrycd());
+		return "1";
 	}
 
 }
